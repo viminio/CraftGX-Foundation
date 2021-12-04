@@ -1,0 +1,34 @@
+--- a/net/minecraft/util/math/MutableBoundingBox.java
++++ b/net/minecraft/util/math/MutableBoundingBox.java
+@@ -156,4 +_,31 @@
+    public IntArrayNBT func_151535_h() {
+       return new IntArrayNBT(new int[]{this.field_78897_a, this.field_78895_b, this.field_78896_c, this.field_78893_d, this.field_78894_e, this.field_78892_f});
+    }
++
++    // Paper start - OBFHELPER
++    public final int minX() {
++        return this.field_78897_a;
++    }
++
++    public final int minY() {
++        return this.field_78895_b;
++    }
++
++    public final int minZ() {
++        return this.field_78896_c;
++    }
++
++    public final int maxX() {
++        return this.field_78893_d;
++    }
++
++    public final int maxY() {
++        return this.field_78894_e;
++    }
++
++    public final int maxZ() {
++        return this.field_78892_f;
++    }
++    // Paper end
++
+ }

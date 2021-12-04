@@ -1,0 +1,35 @@
+--- a/net/minecraft/util/EntityPredicates.java
++++ b/net/minecraft/util/EntityPredicates.java
+@@ -1,8 +_,10 @@
+ package net.minecraft.util;
+ 
+ import com.google.common.base.Predicates;
++
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+@@ -30,6 +_,12 @@
+       return !p_233587_0_.func_175149_v();
+    };
+ 
++    // Paper start
++    public static final Predicate<Entity> affectsSpawning = (entity) -> {
++        return !entity.func_175149_v() && entity.func_70089_S() && (entity instanceof PlayerEntity) && ((PlayerEntity) entity).affectsSpawning;
++    };
++    // Paper end
++
+    public static Predicate<Entity> func_188443_a(double p_188443_0_, double p_188443_2_, double p_188443_4_, double p_188443_6_) {
+       double d0 = p_188443_6_ * p_188443_6_;
+       return (p_233584_8_) -> {
+@@ -41,7 +_,7 @@
+       Team team = p_200823_0_.func_96124_cp();
+       Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();
+       return (Predicate<Entity>)(team$collisionrule == Team.CollisionRule.NEVER ? Predicates.alwaysFalse() : field_180132_d.and((p_233586_3_) -> {
+-         if (!p_233586_3_.func_70104_M()) {
++         if (!p_233586_3_.canCollideWithCB(p_200823_0_) || !p_200823_0_.canCollideWithCB(p_233586_3_)) { // CraftBukkit - collidable API
+             return false;
+          } else if (!p_200823_0_.field_70170_p.field_72995_K || p_233586_3_ instanceof PlayerEntity && ((PlayerEntity)p_233586_3_).func_175144_cb()) {
+             Team team1 = p_233586_3_.func_96124_cp();

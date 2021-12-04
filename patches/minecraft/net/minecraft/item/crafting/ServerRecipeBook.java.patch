@@ -1,0 +1,50 @@
+--- a/net/minecraft/item/crafting/ServerRecipeBook.java
++++ b/net/minecraft/item/crafting/ServerRecipeBook.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.item.crafting;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
+@@ -16,6 +_,7 @@
+ import net.minecraft.util.ResourceLocationException;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
+ 
+ public class ServerRecipeBook extends RecipeBook {
+    private static final Logger field_192828_d = LogManager.getLogger();
+@@ -26,7 +_,7 @@
+ 
+       for(IRecipe<?> irecipe : p_197926_1_) {
+          ResourceLocation resourcelocation = irecipe.func_199560_c();
+-         if (!this.field_194077_a.contains(resourcelocation) && !irecipe.func_192399_d()) {
++         if (!this.field_194077_a.contains(resourcelocation) && !irecipe.func_192399_d() && CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_197926_2_, resourcelocation)) { // CraftBukkit
+             this.func_209118_a(resourcelocation);
+             this.func_209120_c(resourcelocation);
+             list.add(resourcelocation);
+@@ -57,6 +_,7 @@
+    }
+ 
+    private void func_194081_a(SRecipeBookPacket.State p_194081_1_, ServerPlayerEntity p_194081_2_, List<ResourceLocation> p_194081_3_) {
++      if (p_194081_2_.field_71135_a == null) return; // SPIGOT-4478 during PlayerLoginEvent
+       p_194081_2_.field_71135_a.func_147359_a(new SRecipeBookPacket(p_194081_1_, p_194081_3_, Collections.emptyList(), this.func_242139_a()));
+    }
+ 
+@@ -96,12 +_,12 @@
+             ResourceLocation resourcelocation = new ResourceLocation(s);
+             Optional<? extends IRecipe<?>> optional = p_223417_3_.func_215367_a(resourcelocation);
+             if (!optional.isPresent()) {
+-               field_192828_d.error("Tried to load unrecognized recipe: {} removed now.", (Object)resourcelocation);
++               field_192828_d.error(i18n.get("serverrecipebook.1", (Object)resourcelocation));
+             } else {
+                p_223417_2_.accept(optional.get());
+             }
+          } catch (ResourceLocationException resourcelocationexception) {
+-            field_192828_d.error("Tried to load improperly formatted recipe: {} removed now.", (Object)s);
++            field_192828_d.error(i18n.get("serverrecipebook.2", (Object)s));
+          }
+       }
+ 

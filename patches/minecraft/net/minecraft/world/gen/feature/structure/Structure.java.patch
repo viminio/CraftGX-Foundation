@@ -1,0 +1,71 @@
+--- a/net/minecraft/world/gen/feature/structure/Structure.java
++++ b/net/minecraft/world/gen/feature/structure/Structure.java
+@@ -5,6 +_,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.Codec;
+ import java.util.List;
+ import java.util.Locale;
+@@ -38,7 +_,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Structure<C extends IFeatureConfig> {
++public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> implements net.minecraftforge.common.extensions.IForgeStructure {
+    public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
+    private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
+    private static final Logger field_208204_b = LogManager.getLogger();
+@@ -94,7 +_,7 @@
+       } else {
+          Structure<?> structure = Registry.field_218361_B.func_82594_a(new ResourceLocation(s.toLowerCase(Locale.ROOT)));
+          if (structure == null) {
+-            field_208204_b.error("Unknown feature id: {}", (Object)s);
++            field_208204_b.error(i18n.get("structure.1", (Object)s));
+             return null;
+          } else {
+             int i = p_236393_1_.func_74762_e("ChunkX");
+@@ -113,20 +_,20 @@
+                   ResourceLocation resourcelocation1 = field_242784_x.getOrDefault(resourcelocation, resourcelocation);
+                   IStructurePieceType istructurepiecetype = Registry.field_218362_C.func_82594_a(resourcelocation1);
+                   if (istructurepiecetype == null) {
+-                     field_208204_b.error("Unknown structure piece id: {}", (Object)resourcelocation1);
++                     field_208204_b.error(i18n.get("structure.2", (Object)resourcelocation1));
+                   } else {
+                      try {
+                         StructurePiece structurepiece = istructurepiecetype.load(p_236393_0_, compoundnbt);
+                         structurestart.func_186161_c().add(structurepiece);
+                      } catch (Exception exception) {
+-                        field_208204_b.error("Exception loading structure piece with id {}", resourcelocation1, exception);
++                        field_208204_b.error(i18n.get("structure.3", resourcelocation1, exception));
+                      }
+                   }
+                }
+ 
+                return structurestart;
+             } catch (Exception exception1) {
+-               field_208204_b.error("Failed Start with id {}", s, exception1);
++               field_208204_b.error(i18n.get("structure.4", s, exception1));
+                return null;
+             }
+          }
+@@ -237,11 +_,16 @@
+    }
+ 
+    public List<MobSpawnInfo.Spawners> func_202279_e() {
+-      return ImmutableList.of();
++      return getSpawnList(net.minecraft.entity.EntityClassification.MONSTER);
+    }
+ 
+    public List<MobSpawnInfo.Spawners> func_214469_f() {
+-      return ImmutableList.of();
++      return getSpawnList(net.minecraft.entity.EntityClassification.CREATURE);
++   }
++
++   @Override
++   public final List<MobSpawnInfo.Spawners> getSpawnList(net.minecraft.entity.EntityClassification classification) {
++      return net.minecraftforge.common.world.StructureSpawnManager.getSpawnList(getStructure(), classification);
+    }
+ 
+    public interface IStartFactory<C extends IFeatureConfig> {

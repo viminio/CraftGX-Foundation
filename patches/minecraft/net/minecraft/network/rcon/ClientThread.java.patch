@@ -1,0 +1,52 @@
+--- a/net/minecraft/network/rcon/ClientThread.java
++++ b/net/minecraft/network/rcon/ClientThread.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.network.rcon;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import java.io.BufferedInputStream;
+ import java.io.ByteArrayOutputStream;
+ import java.io.DataOutputStream;
+@@ -89,11 +_,11 @@
+          } catch (IOException ioexception) {
+             return;
+          } catch (Exception exception1) {
+-            field_164005_h.error("Exception whilst parsing RCON input", (Throwable)exception1);
++            field_164005_h.error(i18n.get("clientthread.1", (Throwable)exception1));
+             return;
+          } finally {
+             this.func_72653_g();
+-            field_164005_h.info("Thread {} shutting down", (Object)this.field_164003_c);
++            field_164005_h.info(i18n.get("clientthread.2", (Object)this.field_164003_c));
+             this.field_72619_a = false;
+          }
+       }
+@@ -116,13 +_,14 @@
+    }
+ 
+    private void func_72655_a(int p_72655_1_, String p_72655_2_) throws IOException {
+-      int i = p_72655_2_.length();
+-
++      byte[] whole = p_72655_2_.getBytes(StandardCharsets.UTF_8);
++      int i = whole.length;
++      int start = 0;
+       do {
+          int j = 4096 <= i ? 4096 : i;
+-         this.func_72654_a(p_72655_1_, 0, p_72655_2_.substring(0, j));
+-         p_72655_2_ = p_72655_2_.substring(j);
+-         i = p_72655_2_.length();
++         this.func_72654_a(p_72655_1_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
++         i -= j;
++         start += j;
+       } while(0 != i);
+ 
+    }
+@@ -137,7 +_,7 @@
+       try {
+          this.field_72659_h.close();
+       } catch (IOException ioexception) {
+-         field_164005_h.warn("Failed to close socket", (Throwable)ioexception);
++         field_164005_h.warn(i18n.get("clientthread.3", (Throwable)ioexception));
+       }
+ 
+    }
