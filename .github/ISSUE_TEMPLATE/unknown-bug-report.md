@@ -14,14 +14,13 @@ assignees: ''
 <!-- If you don't know where to upload your logs and crash reports, you can use these websites : -->
 <!-- https://paste.ubuntu.com/ (recommended) -->
 <!-- https://mclo.gs -->
-<!-- https://haste.mohistmc.com -->
 <!-- https://pastebin.com -->
 
 <!-- TO FILL THIS TEMPLATE, YOU NEED TO REPLACE THE {} BY WHAT YOU WANT -->
 
 **Minecraft Version :** {Minecraft version}
 
-**Mohist Version :** {Provide Mohist build number}
+**CraftGX-Foundation Version :** {Provide CraftGX-Foundation build number}
 
 **Operating System :** {Provide the name of your OS}
 
