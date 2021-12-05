@@ -1,16 +1,6 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven { url = 'https://maven.minecraftforge.net/' }
-    }
-}
+rootProject.name = 'arclight'
+include 'arclight-common'
+include 'forge-installer'
+include 'arclight-forge'
+include 'i18n-config'
 
-rootProject.name = 'Mohist'
-
-include ':mcp'
-include ':clean'
-include ':forge'
-
-project(":mcp").projectDir = file("projects/mcp")
-project(":clean").projectDir = file("projects/clean")
-project(":forge").projectDir = file("projects/mohist")
