@@ -1055,7 +1055,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -1066,61 +_,285 @@
+@@ -1066,61 +_,284 @@
           this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
           this.field_147369_b.func_143004_u();
        } else {
@@ -1283,8 +1283,9 @@
 -      this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
 +      MinecraftTimings.playerCommandTimer.startTiming(); // Paper
 +      // CraftBukkit start - whole method
-+      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
-+      this.field_147370_c.info(this.field_147369_b.func_195047_I_() + " issued server command: " + p_147361_1_);
++      if ( org.spigotmc.SpigotConfig.logCommands ) { // Spigot
++         this.field_147370_c.info(this.field_147369_b.func_195047_I_() + " issued server command: " + p_147361_1_);
++      }
 +
 +      CraftPlayer player = this.getPlayer();
 +      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet(field_147367_d));
@@ -1294,13 +1295,10 @@
 +         return;
 +      }
 +      try {
-+         if (this.craftServer.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
-+            return;
-+         }
++         this.craftServer.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
 +      } catch (org.bukkit.command.CommandException ex) {
 +         player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
 +         java.util.logging.Logger.getLogger(ServerPlayNetHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-+         return;
 +      } finally {
 +         MinecraftTimings.playerCommandTimer.stopTiming(); // Paper
 +      }
@@ -1331,7 +1329,8 @@
 +         CraftEventFactory.callPlayerInteractEvent(this.field_147369_b, Action.LEFT_CLICK_AIR, this.field_147369_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
 +      }
 +      // Arm swing animation
-+      PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
++      io.papermc.paper.event.player.PlayerArmSwingEvent event = new io.papermc.paper.event.player.PlayerArmSwingEvent(this.getPlayer(), p_175087_1_.func_187018_a() == Hand.MAIN_HAND ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND); // Paper
++      //PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
 +      this.craftServer.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) return;
 +      // CraftBukkit end
@@ -1963,7 +1962,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1417,4 +_,80 @@
+@@ -1417,4 +_,82 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
@@ -1975,7 +1974,6 @@
 +
 +   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
 +      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
-+      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +      if (p_147349_1_.field_149562_a.equals(CUSTOM_REGISTER)) {
 +         try {
 +            String channels = p_147349_1_.field_149561_c.toString(Charsets.UTF_8);
@@ -1985,7 +1983,7 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.14", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.14"), ex);
 +            this.disconnect("Invalid payload REGISTER!");
 +         }
 +      }
@@ -1998,20 +1996,23 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.15", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.15"), ex);
 +            this.disconnect("Invalid payload UNREGISTER!");
 +         }
 +      } else {
 +         try {
++            int readerIndex = p_147349_1_.field_149561_c.readerIndex();
 +            final byte[] data = new byte[p_147349_1_.field_149561_c.readableBytes()];
 +            p_147349_1_.field_149561_c.readBytes(data);
 +            this.craftServer.getMessenger().dispatchIncomingMessage(this.field_147369_b.getBukkitEntity(), p_147349_1_.field_149562_a.toString(), data);
++            p_147349_1_.field_149561_c.readerIndex(readerIndex);
 +         }
 +         catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16"), ex);
 +            this.disconnect("Invalid custom payload!");
 +         }
 +      }
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +   }
 +
 +   public boolean isDisconnected() {

@@ -7,12 +7,11 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import java.math.BigInteger;
-@@ -14,9 +_,12 @@
+@@ -14,9 +_,11 @@
  import javax.annotation.Nullable;
  import javax.crypto.Cipher;
  import javax.crypto.SecretKey;
 +
-+import io.papermc.paper.adventure.PaperAdventure;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.NetworkManager;
@@ -73,7 +72,7 @@
 +         this.field_147333_a.func_150718_a(ichatbasecomponent);
 +      }
 +      catch (Exception exception) {
-+         field_147332_c.error(i18n.get("serverloginnethandler.2", exception));
++         field_147332_c.error(i18n.get("serverloginnethandler.2"), exception);
 +      }
 +   }
 +   // CraftBukkit end
@@ -93,7 +92,7 @@
 -      }
 -
 -   }
-+         field_147332_c.error(i18n.get("serverloginnethandler.4", (Throwable)exception));
++         field_147332_c.error(i18n.get("serverloginnethandler.4"), (Throwable)exception);
 +      }
 +
 +   }
