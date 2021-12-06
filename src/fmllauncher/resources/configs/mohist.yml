@@ -3,6 +3,7 @@ mohist:
   lang: xx_XX
   custom_flags: aaaa bbbb
   check_libraries: true
+  libraries_downloadsource: MOHIST
   disable_mods_blacklist: false
   disable_plugins_blacklist: false
   check_update_auto_download: false
@@ -13,7 +14,6 @@ mohist:
   forge_ignore_optional_mods_version_check: false
   ignore_empty_time: all_worlds
   chunk_unload_delay: 5
-  paper_optimization: only_works
   enable_worldedit_fix: true
   networkmanager:
     debug: false

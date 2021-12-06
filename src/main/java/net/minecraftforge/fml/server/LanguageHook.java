@@ -22,17 +22,21 @@ package net.minecraftforge.fml.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraftforge.fml.ForgeI18n;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -107,7 +111,7 @@ public class LanguageHook
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         // Possible multi-language server support?
-        for (String lang : Arrays.asList("en_us")) {
+        for (String lang : Arrays.asList(i18n.getVanillaLanguage())) {
             loadLanguage(lang, server);
         }
         capturedTables.forEach(t->t.putAll(modTable));

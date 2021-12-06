@@ -4,15 +4,15 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.NumberUtils;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
+import java.util.*;
 
 public class i18n {
-    public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+    private static ResourceBundle rb;
+    private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn");
+    public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN");
 
     public static String get(String key) {
+        rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
         return rb.getString(key);
     }
 
@@ -26,7 +26,17 @@ public class i18n {
             if (key == 1) return locale.substring(0, 2);
             if (key == 2) return locale.substring(3, 5);
         }
-        return "xx_XX";
+        return "xx";
+    }
+
+    public static String getVanillaLanguage() {
+        String locale = MohistConfigUtil.sMohist("lang", "en_us");
+        if (locale.length() == 5) {
+            if (a.contains(locale.toLowerCase())) {
+                return locale.toLowerCase();
+            }
+        }
+        return "en_us";
     }
 
     public static String getLanguage() {
@@ -38,7 +48,7 @@ public class i18n {
     }
 
     public static String getLocale() {
-        return rb.getLocale().toString();
+        return getLanguage() + "_" + getCountry();
     }
 
     public static boolean isCN() {

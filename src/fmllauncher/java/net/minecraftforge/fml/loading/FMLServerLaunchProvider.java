@@ -59,10 +59,10 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
         final List<String> mavenRoots = new ArrayList<>((List<String>) arguments.get("mavenRoots"));
         final List<String> mods = new ArrayList<>((List<String>) arguments.get("mods"));
         mavenRoots.add(LibraryFinder.findLibsPath().toString());
-        final String forgeVersion = (String) arguments.get("forgeVersion");
+        final String forgeVersion = (String) arguments.get("mohistVersion");
         final String mcVersion = (String) arguments.get("mcVersion");
         final String forgeGroup = (String) arguments.get("forgeGroup");
-        mods.add(forgeGroup+":forge:universal:"+mcVersion+"-"+forgeVersion);
+        mods.add(forgeGroup+":mohist:universal:"+mcVersion+"-"+forgeVersion);
         // generics are gross yea?
         ((Map)arguments).put("mavenRoots", mavenRoots);
         ((Map)arguments).put("mods", mods);

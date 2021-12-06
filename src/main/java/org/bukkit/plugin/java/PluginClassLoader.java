@@ -19,6 +19,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
+import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
@@ -153,8 +154,12 @@ public final class PluginClassLoader extends URLClassLoader {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
-            if (name.replace("/", ".").startsWith("net.minecraft.server.v1_16_R3.")) {
-                String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
+            if (name.replace('/','.').startsWith("net.minecraft.server.v1_16_R3.")) {
+                ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
+                if(remappedClassMapping == null){
+                    throw new ClassNotFoundException(name.replace('/','.'));
+                }
+                String remappedClass = remappedClassMapping.getMcpName();
                 return Class.forName(remappedClass);
             }
             if (name.startsWith("org.bukkit.")) {
@@ -231,6 +236,8 @@ public final class PluginClassLoader extends URLClassLoader {
                     bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
                     bytecode = RemapUtils.remapFindClass(bytecode);
 
+                    bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
+
                     bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
 
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
@@ -268,4 +275,10 @@ public final class PluginClassLoader extends URLClassLoader {
 
         return result;
     }
+
+    // Mohist start: add entry point for asm or mixin
+    private byte[] modifyByteCode(String className, byte[] bytes) {
+        return bytes;
+    }
+    //Mohist end
 }

@@ -159,6 +159,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ChunkHolder;
@@ -385,6 +386,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         }
                     } else if (entity instanceof ZoglinEntity) {
                         return new CraftZoglin(server, (ZoglinEntity) entity);
+                    } else if (entity instanceof AbstractRaiderEntity) {
+                        return new CraftCustomRaider(server, (AbstractRaiderEntity) entity);
                     } else {
                         return new CraftMonster(server, (MonsterEntity) entity);
                     }
@@ -545,8 +548,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             return new CraftCustomProjectileEntity(server, (ProjectileEntity) entity);
         } else if (entity instanceof ProjectileItemEntity) {
             return new CraftCustomThrowableProjectile(server, (ProjectileItemEntity) entity);
-        } else if (entity instanceof AbstractRaiderEntity) {
-            return new CraftCustomRaider(server, (AbstractRaiderEntity) entity);
         } else if (entity instanceof AbstractMinecartEntity) {
             return new CraftCustomMinecraft(server, (AbstractMinecartEntity) entity);
         } else if (entity instanceof ContainerMinecartEntity) {
@@ -654,16 +655,15 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
         // If this entity is riding another entity, we must dismount before teleporting.
         entity.stopRiding();
-        entity.level = ((CraftWorld) location.getWorld()).getHandle();
 
         // Let the server handle cross world teleports
-        //if (!location.getWorld().equals(getWorld())) {
-        //    entity.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
-        //    return true;
-        //}
+        if (!location.getWorld().equals(getWorld())) {
+            entity.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+            return true;
+        }
 
         // entity.setLocation() throws no event, and so cannot be cancelled
-        entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch()); // Paper - use proper setPositionRotation for teleportation
+        entity.absMoveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         // SPIGOT-619: Force sync head rotation also
         entity.setYHeadRot(location.getYaw());
 
@@ -933,19 +933,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return getHandle().getVehicle().getBukkitEntity();
     }
 
-    // Paper start
-    @Override
-    public net.kyori.adventure.text.Component customName() {
-        final ITextComponent name = this.getHandle().getCustomName();
-        return name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(name) : null;
-    }
-
-    @Override
-    public void customName(final net.kyori.adventure.text.Component customName) {
-        this.getHandle().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
-    }
-    // Paper end
-
     @Override
     public void setCustomName(String name) {
         // sane limit for name length
@@ -999,7 +986,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getHandle().getDisplayName());
+        return CraftChatMessage.fromComponent(getHandle().getName());
     }
 
     @Override

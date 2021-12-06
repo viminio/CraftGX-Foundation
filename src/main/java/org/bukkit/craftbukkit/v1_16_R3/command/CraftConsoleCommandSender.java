@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.command;
-
 import java.util.UUID;
-
+import com.mohistmc.MohistMC;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -19,73 +18,54 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
     protected CraftConsoleCommandSender() {
         super();
     }
-
-    @Override
+	@Override
     public void sendMessage(String message) {
         sendRawMessage(message);
     }
-
-    @Override
+	@Override
     public void sendRawMessage(String message) {
         System.out.println(ChatColor.stripColor(message));
     }
-
-    @Override
-    public void sendRawMessage(UUID sender, String message) {
+	public void sendRawMessage(UUID sender, String message) {
         this.sendRawMessage(message); // Console doesn't know of senders
     }
 
-    @Override
+	@Override
     public void sendMessage(String[] messages) {
         for (String message : messages) {
             sendMessage(message);
         }
     }
-
-    @Override
+	@Override
     public String getName() {
         return "CONSOLE";
     }
-
-    @Override
+	@Override
     public boolean isOp() {
         return true;
     }
-
-    @Override
+	@Override
     public void setOp(boolean value) {
         throw new UnsupportedOperationException("Cannot change operator status of server console");
     }
-
-    @Override
+	@Override
     public boolean beginConversation(Conversation conversation) {
         return conversationTracker.beginConversation(conversation);
     }
-
-    @Override
+	@Override
     public void abandonConversation(Conversation conversation) {
         conversationTracker.abandonConversation(conversation, new ConversationAbandonedEvent(conversation, new ManuallyAbandonedConversationCanceller()));
     }
-
-    @Override
+	@Override
     public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details) {
         conversationTracker.abandonConversation(conversation, details);
     }
-
-    @Override
+	@Override
     public void acceptConversationInput(String input) {
         conversationTracker.acceptConversationInput(input);
     }
-
-    @Override
+	@Override
     public boolean isConversing() {
         return conversationTracker.isConversing();
     }
-
-    // Paper start
-    @Override
-    public void sendMessage(final net.kyori.adventure.identity.Identity identity, final net.kyori.adventure.text.Component message, final net.kyori.adventure.audience.MessageType type) {
-        this.sendRawMessage(org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromComponent(io.papermc.paper.adventure.PaperAdventure.asVanilla(message)));
-    }
-    // Paper end
 }
